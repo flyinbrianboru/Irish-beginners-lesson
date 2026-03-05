@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ga">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Gaeilge Uladh — Tús Maith</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf7f2;
+  --card: #ffffff;
+  --text: #1a1610;
+  --muted: #7a6e5f;
+  --dim: #b0a898;
+  --border: #e8e0d0;
+  --accent: #2d5a1b;
+  --accent-light: #e8f0e4;
+  --accent-mid: #4a8a2e;
+  --gold: #8b6914;
+  --gold-light: #f5ead8;
+  --blue: #1a3a6e;
+  --blue-light: #e4ecf8;
+  --rose: #8b2020;
+  --rose-light: #faeaea;
+  --green: #1a5c30;
+  --green-light: #e4f0e8;
+  --amber: #7a4a00;
+  --amber-light: #fff3d8;
+  --shadow: 0 2px 16px rgba(0,0,0,0.07);
+  --shadow-lg: 0 4px 32px rgba(0,0,0,0.12);
+}
+html, body { background: var(--bg); color: var(--text); font-family: 'Lora', Georgia, serif; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+/* ── LAYOUT ── */
+.app { max-width: 680px; margin: 0 auto; padding: 1.5rem 1rem 5rem; }
+
+/* ── HEADER ── */
+.main-header { text-align: center; padding: 2.5rem 1rem 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+.main-header .eyebrow { font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+.main-header h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 2.8rem); font-weight: 700; color: var(--text); line-height: 1.1; }
+.main-header .subtitle { font-style: italic; color: var(--muted); font-size: 1rem; margin-top: 0.5rem; }
+.progress-bar-outer { height: 4px; background: var(--border); border-radius: 4px; margin-top: 1.5rem; overflow: hidden; }
+.progress-bar-inner { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-mid)); border-radius: 4px; transition: width 0.5s ease; }
+
+/* ── NAV ── */
+.topic-nav { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; margin-bottom: 2rem; }
+.topic-nav-btn { padding: 0.3rem 0.8rem; border-radius: 2rem; font-size: 0.72rem; letter-spacing: 0.04em; font-family: 'Lora', serif; background: transparent; color: var(--muted); border: 1px solid var(--border); cursor: pointer; transition: all 0.18s; -webkit-tap-highlight-color: transparent; }
+.topic-nav-btn.active { background: var(--accent); color: white; border-color: var(--accent); font-weight: 600; }
+.topic-nav-btn.done { background: var(--green-light); color: var(--green); border-color: var(--green); }
+.topic-nav-btn:active { transform: scale(0.97); }
+
+/* ── SECTION HEADER ── */
+.section-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; }
+.section-icon { width: 2.2rem; height: 2.2rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+.section-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--text); }
+.section-subtitle { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 0.1rem; }
+
+/* ── PRONUNCIATION BOX ── */
+.pronun-box { background: var(--blue-light); border: 1px solid #c0d0e8; border-radius: 0.75rem; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+.pronun-box h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--blue); margin-bottom: 0.8rem; }
+.pronun-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.pronun-item { font-size: 0.82rem; color: #2a3a5e; line-height: 1.5; }
+.pronun-item strong { color: var(--blue); }
+
+/* ── VOCAB TABLE ── */
+.vocab-grid { display: grid; gap: 0.6rem; margin-bottom: 1.5rem; }
+.vocab-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.65rem; padding: 0.85rem 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; align-items: center; box-shadow: var(--shadow); transition: transform 0.15s; }
+.vocab-card:active { transform: scale(0.99); }
+.vocab-irish { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--accent); font-weight: 700; }
+.vocab-english { font-size: 0.9rem; color: var(--text); }
+.vocab-pronun { font-size: 0.75rem; color: var(--muted); grid-column: 1; font-style: italic; }
+.vocab-note { font-size: 0.72rem; color: var(--gold); grid-column: 2; text-align: right; font-style: italic; }
+
+/* ── CONVERSATION BOX ── */
+.convo-box { background: var(--gold-light); border: 1px solid #ddd0aa; border-radius: 0.75rem; padding: 1.2rem 1.4rem; margin-bottom: 1.5rem; }
+.convo-box h3 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); margin-bottom: 0.9rem; }
+.convo-line { display: flex; gap: 0.75rem; margin-bottom: 0.6rem; align-items: flex-start; }
+.convo-speaker { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; min-width: 2.5rem; padding-top: 0.15rem; }
+.convo-content { flex: 1; }
+.convo-irish { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--text); }
+.convo-english { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
+
+/* ── INFO BOX ── */
+.info-box { background: var(--accent-light); border-left: 3px solid var(--accent); border-radius: 0 0.5rem 0.5rem 0; padding: 0.9rem 1rem; margin-bottom: 1.2rem; font-size: 0.85rem; color: #2a4a1a; line-height: 1.6; }
+.info-box strong { color: var(--accent); }
+
+/* ── QUIZ SECTION ── */
+.quiz-header { text-align: center; background: var(--text); color: white; border-radius: 0.75rem; padding: 1.2rem; margin-bottom: 1.5rem; }
+.quiz-header h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.2rem; }
+.quiz-header p { font-size: 0.82rem; opacity: 0.7; font-style: italic; }
+.quiz-score { display: flex; justify-content: center; gap: 2rem; font-size: 0.85rem; color: var(--muted); margin-bottom: 1.2rem; }
+.quiz-score strong { color: var(--text); }
+
+.q-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; box-shadow: var(--shadow); animation: fadeUp 0.25s ease forwards; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.q-badge { display: inline-block; padding: 0.15rem 0.65rem; border-radius: 1rem; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem; background: var(--accent-light); color: var(--accent); border: 1px solid #b8d4a8; }
+.q-english { background: var(--gold-light); border: 1px solid #ddd0aa; border-radius: 0.5rem; padding: 0.7rem 0.9rem; margin-bottom: 1rem; }
+.q-english-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); margin-bottom: 0.2rem; }
+.q-english-text { font-style: italic; font-size: 0.92rem; color: #5a4a20; }
+.q-prompt { font-family: 'Playfair Display', serif; font-size: clamp(1.1rem, 4vw, 1.45rem); font-style: italic; color: var(--text); margin-bottom: 1.2rem; line-height: 1.5; }
+.q-input-row { display: flex; gap: 0.5rem; }
+.q-input { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 0.45rem; padding: 0.6rem 0.85rem; color: var(--text); font-family: 'Lora', serif; font-size: 0.95rem; -webkit-appearance: none; transition: border-color 0.15s; }
+.q-input:focus { outline: none; border-color: var(--accent); }
+.q-input::placeholder { color: var(--dim); }
+.q-submit { background: var(--accent); color: white; border: none; border-radius: 0.45rem; padding: 0.6rem 1.1rem; font-family: 'Lora', serif; font-weight: 600; font-size: 0.85rem; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.q-submit:active { opacity: 0.85; }
+
+.result-box { border-radius: 0.6rem; padding: 1rem; margin-bottom: 0.85rem; animation: fadeUp 0.2s ease; }
+.result-box.correct { background: var(--green-light); border: 1px solid #a8d0b8; }
+.result-box.close   { background: var(--amber-light); border: 1px solid #e0c870; }
+.result-box.wrong   { background: var(--rose-light);  border: 1px solid #e0a8a8; }
+.result-label { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.25rem; }
+.result-box.correct .result-label { color: var(--green); }
+.result-box.close   .result-label { color: var(--amber); }
+.result-box.wrong   .result-label { color: var(--rose); }
+.result-answer { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--text); margin-bottom: 0.25rem; }
+.result-reminder { font-size: 0.8rem; color: var(--amber); margin-bottom: 0.25rem; font-style: italic; }
+.result-explanation { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+.q-next { width: 100%; background: var(--text); color: white; border: none; border-radius: 0.45rem; padding: 0.65rem; font-family: 'Lora', serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; margin-top: 0.1rem; }
+.q-next:active { opacity: 0.85; }
+
+/* ── FINISH ── */
+.finish-card { background: var(--card); border: 1px solid var(--border); border-radius: 0.75rem; padding: 2.5rem 1.5rem; text-align: center; box-shadow: var(--shadow-lg); }
+.finish-emoji { font-size: 3rem; margin-bottom: 0.8rem; }
+.finish-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--accent); margin-bottom: 0.3rem; }
+.finish-sub { font-style: italic; color: var(--muted); margin-bottom: 1.5rem; }
+.finish-pct { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 700; line-height: 1; margin-bottom: 0.3rem; }
+.finish-tally { color: var(--muted); font-size: 0.88rem; margin-bottom: 2rem; }
+.finish-btns { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary { background: var(--accent); color: white; border: none; border-radius: 2rem; padding: 0.7rem 1.8rem; font-family: 'Lora', serif; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+.btn-secondary { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 2rem; padding: 0.7rem 1.8rem; font-family: 'Lora', serif; font-weight: 600; font-size: 0.92rem; cursor: pointer; }
+
+/* ── SECTION NAV BUTTONS ── */
+.section-footer { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
+.btn-next-section { background: var(--accent); color: white; border: none; border-radius: 2rem; padding: 0.65rem 1.5rem; font-family: 'Lora', serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.btn-next-section:active { opacity: 0.85; }
+.btn-start-quiz { background: var(--text); color: white; border: none; border-radius: 2rem; padding: 0.65rem 1.5rem; font-family: 'Lora', serif; font-weight: 600; font-size: 0.88rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+.divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+.hidden { display: none; }
+.fade-in { animation: fadeUp 0.3s ease forwards; }
+
+/* Progress dots */
+.progress-dots { display: flex; gap: 0.4rem; justify-content: center; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: background 0.3s; }
+.dot.done { background: var(--accent); }
+.dot.current { background: var(--accent-mid); }
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="main-header">
+  <div class="eyebrow">Gaeilge Uladh · Ulster Irish</div>
+  <h1>Tús Maith</h1>
+  <p class="subtitle">A Good Start — Introduction to Irish</p>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="main-progress" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="topic-nav" id="topic-nav"></div>
+<div class="progress-dots" id="progress-dots"></div>
+
+<div id="main-content"></div>
+
+</div><!-- .app -->
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════
+// FUZZY MATCHING
+// ══════════════════════════════════════════════════════════════════════════
+function stripFadas(s){ return s.replace(/[áÁ]/g,'a').replace(/[éÉ]/g,'e').replace(/[íÍ]/g,'i').replace(/[óÓ]/g,'o').replace(/[úÚ]/g,'u'); }
+function stripLenition(s){ return s.replace(/\b([bcdfgmpst])h/gi,'$1'); }
+function clean(s){ return s.trim().toLowerCase().replace(/[^a-záéíóúÁÉÍÓÚ\s]/g,''); }
+function levenshtein(a,b){
+  const m=a.length,n=b.length,dp=Array.from({length:m+1},(_,i)=>[i]);
+  for(let j=0;j<=n;j++)dp[0][j]=j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[m][n];
+}
+function checkAnswer(userRaw,correctRaw){
+  const user=clean(userRaw),correct=clean(correctRaw);
+  if(user===correct) return {result:'correct',reminder:''};
+  const uw=user.split(/\s+/),cw=correct.split(/\s+/);
+  if(stripFadas(user)===stripFadas(correct)){
+    const miss=[];
+    cw.forEach((w,i)=>{ const u=uw[i]||''; if(u!==w) for(let k=0;k<w.length;k++) if(w[k]!==(u[k]||'')&&stripFadas(w[k])===(u[k]||'')) miss.push(w[k]); });
+    return {result:'close',reminder:`Almost! You forgot the fada on: ${[...new Set(miss)].join(', ')} — correct: ${correctRaw}`};
+  }
+  if(stripLenition(user)===stripLenition(correct)) return {result:'close',reminder:`Almost! You forgot the lenition (séimhiú) — correct: ${correctRaw}`};
+  if(stripFadas(stripLenition(user))===stripFadas(stripLenition(correct))) return {result:'close',reminder:`Almost! Watch your fadas and lenition — correct: ${correctRaw}`};
+  const us=stripFadas(stripLenition(user)),cs=stripFadas(stripLenition(correct));
+  if(levenshtein(us,cs)===1) return {result:'close',reminder:`Almost! One small typo — correct: ${correctRaw}`};
+  if(cw.length>1&&uw.length===cw.length){
+    let ok=true,rem=[];
+    for(let i=0;i<cw.length;i++){
+      if(uw[i]===cw[i]) continue;
+      const a=stripFadas(stripLenition(uw[i])),b=stripFadas(stripLenition(cw[i]));
+      if(a===b) rem.push(`fada/lenition on "${cw[i]}"`);
+      else if(levenshtein(a,b)<=1) rem.push(`spelling of "${cw[i]}"`);
+      else { ok=false; break; }
+    }
+    if(ok&&rem.length>0) return {result:'close',reminder:`Almost! Watch: ${rem.join(', ')} — correct: ${correctRaw}`};
+    if(ok&&rem.length===0) return {result:'correct',reminder:''};
+  }
+  return {result:'wrong',reminder:''};
+}
+
+// ══════════════════════════════════════════════════════════════════════════
+// CONTENT DATA
+// ══════════════════════════════════════════════════════════════════════════
+const TOPICS = [
+
+  // ── 1. PRONUNCIATION ─────────────────────────────────────────────────────
+  {
+    id: 'pronunciation',
+    label: 'Pronunciation',
+    icon: '🔊',
+    color: '#1a3a6e',
+    colorLight: '#e4ecf8',
+    learn: {
+      title: 'Ulster Irish Pronunciation',
+      subtitle: 'How to sound like a native Ulster speaker',
+      content: [
+        {
+          type: 'info',
+          text: '<strong>Ulster Irish</strong> is spoken mainly in Donegal and parts of Tyrone and Derry. It has a distinctive musical quality and some sounds differ from the standard you may see in textbooks.'
+        },
+        {
+          type: 'pronunciation',
+          title: 'Key vowel sounds',
+          items: [
+            { key: 'á', value: 'like "aw" in "saw" — e.g. <em>arán</em> (bread)' },
+            { key: 'é', value: 'like "ay" in "say" — e.g. <em>Éire</em> (Ireland)' },
+            { key: 'í', value: 'like "ee" in "see" — e.g. <em>tí</em> (house)' },
+            { key: 'ó', value: 'like "oh" — e.g. <em>mór</em> (big)' },
+            { key: 'ú', value: 'like "oo" in "moon" — e.g. <em>tú</em> (you)' },
+            { key: 'ao', value: 'in Ulster: like "ee" — e.g. <em>aon</em> (one) = "een"' },
+          ]
+        },
+        {
+          type: 'pronunciation',
+          title: 'Consonant mutations',
+          items: [
+            { key: 'séimhiú (h)', value: 'softens a consonant — <em>bean</em> (woman) → <em>bhean</em> = "van"' },
+            { key: 'bh / mh', value: 'sounds like "v" — <em>mhaith</em> = "wah/vah"' },
+            { key: 'dh / gh', value: 'like a soft "y" or "g" — <em>dha</em> = "ya"' },
+            { key: 'fh', value: 'completely silent — <em>fhéir</em> = "ayr"' },
+            { key: 'th', value: 'like "h" — <em>maith</em> = "mah"' },
+            { key: 'ch', value: 'like "ch" in Scottish "loch" — <em>oíche</em> = "ee-heh"' },
+          ]
+        },
+        {
+          type: 'info',
+          text: '<strong>Slender vs broad:</strong> Irish consonants are either "broad" (next to a, o, u) or "slender" (next to e, i). This affects pronunciation. E.g. <em>mór</em> (broad r) vs <em>fir</em> (slender r).'
+        },
+        {
+          type: 'pronunciation',
+          title: 'Ulster-specific notes',
+          items: [
+            { key: 'Cad é', value: 'Ulster for "What" — sounds like "ka-jay"' },
+            { key: 'gasúr', value: 'boy — sounds like "ga-soor"' },
+            { key: 'girseach', value: 'girl — sounds like "girsh-akh"' },
+            { key: 'madadh', value: 'dog — sounds like "ma-duh"' },
+            { key: 'stress', value: 'usually on the FIRST syllable in Ulster Irish' },
+            { key: 'final vowels', value: 'often dropped or shortened in fast speech' },
+          ]
+        }
+      ]
+    },
+    quiz: [
+      { english: "What does 'séimhiú' (the h after a consonant) do to a word?", irish: "The séimhiú (h after consonant) ___ the sound of the consonant", answer: "softens", explanation: "The séimhiú softens the consonant — e.g. b → bh sounds like 'v', m → mh sounds like 'v' or 'w'." },
+      { english: "How is 'bh' or 'mh' pronounced?", irish: "The letters 'bh' and 'mh' sound like the letter ___", answer: "v", explanation: "'Bh' and 'mh' both make a 'v' sound. E.g. 'mhaith' (good) = 'wah/vah'." },
+      { english: "Where is stress usually placed in Ulster Irish?", irish: "Stress in Ulster Irish usually falls on the ___ syllable", answer: "first", explanation: "Ulster Irish puts stress on the first syllable, e.g. GAsúr, MÁthair." },
+      { english: "How is 'fh' pronounced in Irish?", irish: "The letters 'fh' are completely ___", answer: "silent", explanation: "'Fh' is silent in Irish. E.g. 'fhéir' (grass, genitive) is pronounced 'ayr'." },
+      { english: "The vowel 'ao' in Ulster Irish sounds like which English vowel?", irish: "In Ulster Irish, 'ao' sounds like ___", answer: "ee", explanation: "In Ulster Irish, 'ao' sounds like 'ee'. E.g. 'aon' (one) = 'een'." },
+    ]
+  },
+
+  // ── 2. GREETINGS ─────────────────────────────────────────────────────────
+  {
+    id: 'greetings',
+    label: 'Greetings',
+    icon: '👋',
+    color: '#8b2020',
+    colorLight: '#faeaea',
+    learn: {
+      title: 'Beannachtaí — Greetings',
+      subtitle: 'How to say hello, goodbye and everything in between',
+      content: [
+        {
+          type: 'info',
+          text: 'Irish has <strong>no single word for "yes" or "no"</strong>. You reply by repeating the verb. This is one of the most important things to know for beginners!'
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'Dia duit', english: 'Hello (to one person)', pronun: '"Dee-a gwit"', note: '' },
+            { irish: 'Dia is Muire duit', english: 'Reply to hello', pronun: '"Dee-a iss Mwir-a gwit"', note: 'Always the reply' },
+            { irish: 'Cad é mar atá tú?', english: 'How are you?', pronun: '"Ka-jay mar a-taw too"', note: 'Ulster form' },
+            { irish: 'Tá mé go maith', english: 'I am well', pronun: '"Taw may guh mah"', note: '' },
+            { irish: 'Maidin mhaith', english: 'Good morning', pronun: '"Ma-jin wah"', note: '' },
+            { irish: 'Tráthnóna maith', english: 'Good afternoon/evening', pronun: '"Traw-noh-na mah"', note: '' },
+            { irish: 'Oíche mhaith', english: 'Good night', pronun: '"Ee-heh wah"', note: '' },
+            { irish: 'Slán leat', english: 'Goodbye (you are leaving)', pronun: '"Slawn lyat"', note: '' },
+            { irish: 'Slán agat', english: 'Goodbye (they are leaving)', pronun: '"Slawn a-gut"', note: '' },
+            { irish: 'Go raibh maith agat', english: 'Thank you', pronun: '"Guh rev mah a-gut"', note: '' },
+            { irish: 'Le do thoil', english: 'Please', pronun: '"Leh duh hull"', note: '' },
+            { irish: 'Gabh mo leithscéal', english: 'Excuse me / Sorry', pronun: '"Guh muh lesh-kale"', note: '' },
+            { irish: 'Tá', english: 'Yes (am/is/are)', pronun: '"Taw"', note: 'Verb, not "yes"' },
+            { irish: 'Níl', english: 'No (am not/is not)', pronun: '"Neel"', note: 'Verb, not "no"' },
+          ]
+        },
+        {
+          type: 'convo',
+          title: 'Comhrá — Sample Conversation',
+          lines: [
+            { speaker: 'Seán', irish: 'Dia duit, a Mháire!', english: 'Hello, Máire!' },
+            { speaker: 'Máire', irish: 'Dia is Muire duit, a Sheáin!', english: 'Hello, Seán!' },
+            { speaker: 'Seán', irish: 'Cad é mar atá tú?', english: 'How are you?' },
+            { speaker: 'Máire', irish: 'Tá mé go maith, go raibh maith agat. Agus tú féin?', english: "I'm well, thank you. And yourself?" },
+            { speaker: 'Seán', irish: 'Tá mé go breá ar fad!', english: "I'm very well indeed!" },
+            { speaker: 'Máire', irish: 'Go maith. Slán leat!', english: 'Good. Goodbye!' },
+            { speaker: 'Seán', irish: 'Slán agat!', english: 'Goodbye!' },
+          ]
+        },
+        {
+          type: 'info',
+          text: '<strong>Names in Irish:</strong> When addressing someone directly, you use the <em>vocative case</em> — you add "a" before the name and lenite it. So "Seán" becomes "a Sheáin" and "Máire" becomes "a Mháire".'
+        }
+      ]
+    },
+    quiz: [
+      { english: 'Hello (to one person)', irish: 'How do you say "Hello"?', answer: 'Dia duit', explanation: '"Dia duit" = God be with you. The standard greeting.' },
+      { english: 'The reply to "Dia duit"', irish: 'Reply to: Dia duit', answer: 'Dia is Muire duit', explanation: '"Dia is Muire duit" = God and Mary be with you.' },
+      { english: 'How are you? (Ulster form)', irish: 'How do you ask "How are you?" in Ulster Irish?', answer: 'Cad é mar atá tú', explanation: 'Ulster Irish uses "Cad é mar atá tú?" — standard Irish uses "Conas atá tú?"' },
+      { english: 'I am well', irish: 'Tá mé ___', answer: 'go maith', explanation: '"Tá mé go maith" = I am well.' },
+      { english: 'Good morning', irish: 'How do you say "Good morning"?', answer: 'Maidin mhaith', explanation: '"Maidin" = morning, "mhaith" = good (lenited after feminine noun).' },
+      { english: 'Good night', irish: 'How do you say "Good night"?', answer: 'Oíche mhaith', explanation: '"Oíche" = night, "mhaith" = good (lenited).' },
+      { english: 'Thank you', irish: 'How do you say "Thank you"?', answer: 'Go raibh maith agat', explanation: '"Go raibh maith agat" = may there be good at you.' },
+      { english: 'Please', irish: 'How do you say "Please"?', answer: 'le do thoil', explanation: '"Le do thoil" = with your will.' },
+      { english: 'Goodbye — said by the person leaving', irish: 'Goodbye (you are leaving) — ___', answer: 'Slán leat', explanation: '"Slán leat" = said by the person leaving. "Slán agat" = said by person staying.' },
+      { english: 'Yes (in response to a Tá question)', irish: 'How do you say "Yes" in Irish?', answer: 'Tá', explanation: 'There is no word for yes/no. You echo the verb. "Tá" = yes (am/is/are).' },
+    ]
+  },
+
+  // ── 3. NUMBERS ───────────────────────────────────────────────────────────
+  {
+    id: 'numbers',
+    label: 'Numbers',
+    icon: '🔢',
+    color: '#1a5c30',
+    colorLight: '#e4f0e8',
+    learn: {
+      title: 'Uimhreacha — Numbers',
+      subtitle: 'Counting from 1 to 20 in Ulster Irish',
+      content: [
+        {
+          type: 'info',
+          text: 'Numbers in Irish are preceded by <strong>"a"</strong> when counting (a haon, a dó…). However when a number comes before a noun, different forms are used. For now we focus on the counting numbers.'
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'a haon', english: 'one (1)', pronun: '"a hain"', note: '' },
+            { irish: 'a dó', english: 'two (2)', pronun: '"a doh"', note: '' },
+            { irish: 'a trí', english: 'three (3)', pronun: '"a tree"', note: '' },
+            { irish: 'a ceathair', english: 'four (4)', pronun: '"a ka-her"', note: '' },
+            { irish: 'a cúig', english: 'five (5)', pronun: '"a koo-ig"', note: '' },
+            { irish: 'a sé', english: 'six (6)', pronun: '"a shay"', note: '' },
+            { irish: 'a seacht', english: 'seven (7)', pronun: '"a shokht"', note: '' },
+            { irish: 'a hocht', english: 'eight (8)', pronun: '"a hukht"', note: '' },
+            { irish: 'a naoi', english: 'nine (9)', pronun: '"a nee"', note: '' },
+            { irish: 'a deich', english: 'ten (10)', pronun: '"a dyeh"', note: '' },
+            { irish: 'a haon déag', english: 'eleven (11)', pronun: '"a hain jayg"', note: '+déag = teen' },
+            { irish: 'a dó dhéag', english: 'twelve (12)', pronun: '"a doh yayg"', note: '' },
+            { irish: 'a trí déag', english: 'thirteen (13)', pronun: '"a tree jayg"', note: '' },
+            { irish: 'a ceathair déag', english: 'fourteen (14)', pronun: '"a ka-her jayg"', note: '' },
+            { irish: 'a cúig déag', english: 'fifteen (15)', pronun: '"a koo-ig jayg"', note: '' },
+            { irish: 'a sé déag', english: 'sixteen (16)', pronun: '"a shay jayg"', note: '' },
+            { irish: 'a seacht déag', english: 'seventeen (17)', pronun: '"a shokht jayg"', note: '' },
+            { irish: 'a hocht déag', english: 'eighteen (18)', pronun: '"a hukht jayg"', note: '' },
+            { irish: 'a naoi déag', english: 'nineteen (19)', pronun: '"a nee jayg"', note: '' },
+            { irish: 'fiche', english: 'twenty (20)', pronun: '"fi-heh"', note: 'No "a" needed' },
+          ]
+        },
+        {
+          type: 'info',
+          text: '<strong>Cá mhéad?</strong> = How many? (Ulster Irish). The standard form is "Cé mhéad?" but you will hear "Cá mhéad?" throughout Ulster. E.g. <em>Cá mhéad duine? — Cúigear.</em> (How many people? — Five.)'
+        },
+        {
+          type: 'convo',
+          title: 'Numbers in use',
+          lines: [
+            { speaker: 'A', irish: 'Cá mhéad duine atá i do theaghlach?', english: 'How many people are in your family?' },
+            { speaker: 'B', irish: 'Tá cúigear — mé féin, mo mháthair, m\'athair agus beirt dheartháir.', english: 'Five — myself, my mother, my father and two brothers.' },
+            { speaker: 'A', irish: 'Cén uimhir theileafóin atá agat?', english: "What's your phone number?" },
+            { speaker: 'B', irish: 'A naoi, a seacht, a haon…', english: 'Nine, seven, one…' },
+          ]
+        }
+      ]
+    },
+    quiz: [
+      { english: 'The number 1', irish: 'How do you say "one"?', answer: 'a haon', explanation: '"A haon" = one.' },
+      { english: 'The number 3', irish: 'How do you say "three"?', answer: 'a trí', explanation: '"A trí" = three.' },
+      { english: 'The number 5', irish: 'How do you say "five"?', answer: 'a cúig', explanation: '"A cúig" = five.' },
+      { english: 'The number 7', irish: 'How do you say "seven"?', answer: 'a seacht', explanation: '"A seacht" = seven.' },
+      { english: 'The number 10', irish: 'How do you say "ten"?', answer: 'a deich', explanation: '"A deich" = ten.' },
+      { english: 'The number 11', irish: 'How do you say "eleven"?', answer: 'a haon déag', explanation: '"A haon déag" = eleven. "Déag" = teen.' },
+      { english: 'The number 15', irish: 'How do you say "fifteen"?', answer: 'a cúig déag', explanation: '"A cúig déag" = fifteen.' },
+      { english: 'The number 20', irish: 'How do you say "twenty"?', answer: 'fiche', explanation: '"Fiche" = twenty. No "a" prefix needed.' },
+      { english: 'How many? (Ulster form)', irish: 'How do you ask "how many?" in Ulster Irish?', answer: 'Cá mhéad', explanation: '"Cá mhéad?" = How many? The Ulster form. Standard Irish: "Cé mhéad?"' },
+      { english: 'The number 8', irish: 'How do you say "eight"?', answer: 'a hocht', explanation: '"A hocht" = eight.' },
+    ]
+  },
+
+  // ── 4. DAYS & MONTHS ─────────────────────────────────────────────────────
+  {
+    id: 'days',
+    label: 'Days & Months',
+    icon: '📅',
+    color: '#6a3a00',
+    colorLight: '#fff3d8',
+    learn: {
+      title: 'Laethanta & Míonna — Days & Months',
+      subtitle: 'The calendar in Ulster Irish',
+      content: [
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'Dé Luain', english: 'Monday', pronun: '"Day loo-in"', note: 'Luan = moon' },
+            { irish: 'Dé Máirt', english: 'Tuesday', pronun: '"Day Mawtch"', note: '' },
+            { irish: 'Dé Céadaoin', english: 'Wednesday', pronun: '"Day Kay-a-deen"', note: '' },
+            { irish: 'Déardaoin', english: 'Thursday', pronun: '"Jay-ar-deen"', note: '' },
+            { irish: 'Dé hAoine', english: 'Friday', pronun: '"Day hee-neh"', note: '' },
+            { irish: 'Dé Sathairn', english: 'Saturday', pronun: '"Day Sa-hirn"', note: '' },
+            { irish: 'Dé Domhnaigh', english: 'Sunday', pronun: '"Day Dow-nee"', note: "Lord's day" },
+          ]
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'Eanáir', english: 'January', pronun: '"An-awrr"', note: '' },
+            { irish: 'Feabhra', english: 'February', pronun: '"Fyow-ra"', note: '' },
+            { irish: 'Márta', english: 'March', pronun: '"Mawrta"', note: '' },
+            { irish: 'Aibreán', english: 'April', pronun: '"Ab-rawn"', note: '' },
+            { irish: 'Bealtaine', english: 'May', pronun: '"Byal-tin-eh"', note: '' },
+            { irish: 'Meitheamh', english: 'June', pronun: '"Meh-hiv"', note: '' },
+            { irish: 'Iúil', english: 'July', pronun: '"Yoo-il"', note: '' },
+            { irish: 'Lúnasa', english: 'August', pronun: '"Loo-na-sa"', note: '' },
+            { irish: 'Meán Fómhair', english: 'September', pronun: '"Mawn Foh-ir"', note: 'Mid-harvest' },
+            { irish: 'Deireadh Fómhair', english: 'October', pronun: '"Der-a Foh-ir"', note: 'End of harvest' },
+            { irish: 'Samhain', english: 'November', pronun: '"Sow-in"', note: 'Halloween origin' },
+            { irish: 'Nollaig', english: 'December / Christmas', pronun: '"Null-ig"', note: '' },
+          ]
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'inniu', english: 'today', pronun: '"in-yoo"', note: '' },
+            { irish: 'amárach', english: 'tomorrow', pronun: '"a-maw-rakh"', note: '' },
+            { irish: 'inné', english: 'yesterday', pronun: '"in-yay"', note: '' },
+            { irish: 'an tseachtain seo', english: 'this week', pronun: '"un tchakht-in shuh"', note: '' },
+            { irish: 'an mhí seo', english: 'this month', pronun: '"un vee shuh"', note: '' },
+          ]
+        },
+        {
+          type: 'convo',
+          title: 'Talking about days',
+          lines: [
+            { speaker: 'A', irish: 'Cad é an lá atá ann inniu?', english: "What day is it today?" },
+            { speaker: 'B', irish: 'Dé Luain atá ann.', english: "It's Monday." },
+            { speaker: 'A', irish: 'Cad é an mhí atá ann?', english: "What month is it?" },
+            { speaker: 'B', irish: 'Tá muid i mí na Nollag.', english: "We are in December." },
+            { speaker: 'A', irish: 'An mbeidh tú saor amárach?', english: "Will you be free tomorrow?" },
+            { speaker: 'B', irish: 'Beidh, buíochas le Dia!', english: "I will, thank God!" },
+          ]
+        }
+      ]
+    },
+    quiz: [
+      { english: 'Monday', irish: 'How do you say "Monday"?', answer: 'Dé Luain', explanation: '"Dé Luain" = Monday. "Luan" relates to the moon.' },
+      { english: 'Wednesday', irish: 'How do you say "Wednesday"?', answer: 'Dé Céadaoin', explanation: '"Dé Céadaoin" = Wednesday. Literally "the first fast".' },
+      { english: 'Friday', irish: 'How do you say "Friday"?', answer: 'Dé hAoine', explanation: '"Dé hAoine" = Friday. Note h-prefix before vowel.' },
+      { english: 'Sunday', irish: 'How do you say "Sunday"?', answer: 'Dé Domhnaigh', explanation: '"Dé Domhnaigh" = Sunday. "Domhnach" = the Lord\'s day.' },
+      { english: 'January', irish: 'How do you say "January"?', answer: 'Eanáir', explanation: '"Eanáir" = January.' },
+      { english: 'July', irish: 'How do you say "July"?', answer: 'Iúil', explanation: '"Iúil" = July.' },
+      { english: 'December / Christmas', irish: 'How do you say "December"?', answer: 'Nollaig', explanation: '"Nollaig" = December. Also means Christmas.' },
+      { english: 'November (also Halloween)', irish: 'How do you say "November"?', answer: 'Samhain', explanation: '"Samhain" = November. Halloween derives from "Oíche Shamhna" (Samhain Eve).' },
+      { english: 'Today', irish: 'How do you say "today"?', answer: 'inniu', explanation: '"Inniu" = today.' },
+      { english: 'Tomorrow', irish: 'How do you say "tomorrow"?', answer: 'amárach', explanation: '"Amárach" = tomorrow.' },
+    ]
+  },
+
+  // ── 5. BASIC VERBS ───────────────────────────────────────────────────────
+  {
+    id: 'verbs',
+    label: 'Basic Verbs',
+    icon: '⚡',
+    color: '#2d5a1b',
+    colorLight: '#e8f0e4',
+    learn: {
+      title: 'Briathra — Basic Verbs',
+      subtitle: 'The present tense and verbal nouns',
+      content: [
+        {
+          type: 'info',
+          text: 'Irish uses a <strong>verbal noun</strong> construction for the present continuous tense. Instead of "I am eating", Irish says <em>"Tá mé ag ithe"</em> — literally "I am at eating". This is used constantly in everyday speech.'
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'Tá mé ag ithe', english: 'I am eating', pronun: '"Taw may egg i-heh"', note: 'ithe = eating' },
+            { irish: 'Tá mé ag ól', english: 'I am drinking', pronun: '"Taw may egg ole"', note: 'ól = drinking' },
+            { irish: 'Tá mé ag dul', english: 'I am going', pronun: '"Taw may egg dul"', note: 'dul = going' },
+            { irish: 'Tá mé ag caint', english: 'I am talking', pronun: '"Taw may egg kanch"', note: 'caint = talking' },
+            { irish: 'Tá mé ag léamh', english: 'I am reading', pronun: '"Taw may egg lyav"', note: 'léamh = reading' },
+            { irish: 'Tá mé ag scríobh', english: 'I am writing', pronun: '"Taw may egg shkreev"', note: 'scríobh = writing' },
+            { irish: 'Tá mé ag obair', english: 'I am working', pronun: '"Taw may egg ob-ir"', note: 'obair = working' },
+            { irish: 'Tá mé ag teacht', english: 'I am coming', pronun: '"Taw may egg tyakht"', note: 'teacht = coming' },
+            { irish: 'Tá mé ag éisteacht', english: 'I am listening', pronun: '"Taw may egg aysh-tyakht"', note: '' },
+            { irish: 'Tá mé ag foghlaim', english: 'I am learning', pronun: '"Taw may egg fow-lim"', note: '' },
+          ]
+        },
+        {
+          type: 'info',
+          text: '<strong>Ba mhaith liom</strong> = I would like / I want. This is the most natural way to express wanting something in Ulster Irish. E.g. <em>Ba mhaith liom cupán tae</em> — I would like a cup of tea.'
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'Ba mhaith liom', english: 'I would like / I want', pronun: '"Ba wah lyum"', note: 'Very common' },
+            { irish: 'Níl mé', english: 'I am not', pronun: '"Neel may"', note: 'Negative of Tá' },
+            { irish: 'An bhfuil tú?', english: 'Are you?', pronun: '"Un will too?"', note: 'Question form' },
+            { irish: 'Tá mé tuirseach', english: 'I am tired', pronun: '"Taw may tir-shakh"', note: '' },
+            { irish: 'Tá mé ocrach', english: 'I am hungry', pronun: '"Taw may uk-rakh"', note: '' },
+            { irish: 'Tá mé sásta', english: 'I am happy/satisfied', pronun: '"Taw may saws-ta"', note: '' },
+          ]
+        },
+        {
+          type: 'convo',
+          title: 'A simple conversation',
+          lines: [
+            { speaker: 'A', irish: 'Cad é atá tú a dhéanamh?', english: 'What are you doing?' },
+            { speaker: 'B', irish: 'Tá mé ag foghlaim Gaeilge.', english: 'I am learning Irish.' },
+            { speaker: 'A', irish: 'Go maith! An bhfuil tú ag dul go dtí an rang?', english: 'Good! Are you going to the class?' },
+            { speaker: 'B', irish: 'Tá. Tá mé ag dul ann anocht.', english: "Yes. I'm going there tonight." },
+            { speaker: 'A', irish: 'Ba mhaith liomsa dul freisin!', english: 'I would like to go too!' },
+          ]
+        }
+      ]
+    },
+    quiz: [
+      { english: 'I am eating', irish: 'Tá mé ag ___', answer: 'ithe', explanation: '"Tá mé ag ithe" = I am eating. "Ithe" is the verbal noun of "ith" (to eat).' },
+      { english: 'I am drinking', irish: 'Tá mé ag ___', answer: 'ól', explanation: '"Tá mé ag ól" = I am drinking.' },
+      { english: 'I am going', irish: 'Tá mé ag ___', answer: 'dul', explanation: '"Tá mé ag dul" = I am going.' },
+      { english: 'I am reading', irish: 'Tá mé ag ___', answer: 'léamh', explanation: '"Tá mé ag léamh" = I am reading.' },
+      { english: 'I am writing', irish: 'Tá mé ag ___', answer: 'scríobh', explanation: '"Tá mé ag scríobh" = I am writing.' },
+      { english: 'I am working', irish: 'Tá mé ag ___', answer: 'obair', explanation: '"Tá mé ag obair" = I am working.' },
+      { english: 'I would like / I want', irish: '___ mhaith liom', answer: 'Ba', explanation: '"Ba mhaith liom" = I would like. The most natural way to express wanting in Ulster Irish.' },
+      { english: 'I am tired', irish: 'Tá mé ___', answer: 'tuirseach', explanation: '"Tá mé tuirseach" = I am tired.' },
+      { english: 'I am hungry', irish: 'Tá mé ___', answer: 'ocrach', explanation: '"Tá mé ocrach" = I am hungry.' },
+      { english: 'Are you? (question form of tá)', irish: '___ bhfuil tú?', answer: 'An', explanation: '"An bhfuil tú?" = Are you? "An" is the question particle which eclipses the verb.' },
+    ]
+  },
+
+  // ── 6. VOCABULARY ────────────────────────────────────────────────────────
+  {
+    id: 'vocabulary',
+    label: 'Vocabulary',
+    icon: '📖',
+    color: '#4a1a6a',
+    colorLight: '#f0e8f8',
+    learn: {
+      title: 'Focal — Vocabulary',
+      subtitle: 'Family, home, food and everyday words',
+      content: [
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'máthair', english: 'mother', pronun: '"maw-hir"', note: '' },
+            { irish: 'athair', english: 'father', pronun: '"a-hir"', note: '' },
+            { irish: 'deartháir', english: 'brother', pronun: '"djar-hawr"', note: '' },
+            { irish: 'deirfiúr', english: 'sister', pronun: '"djer-fyoor"', note: '' },
+            { irish: 'gasúr', english: 'boy', pronun: '"ga-soor"', note: 'Ulster word' },
+            { irish: 'girseach', english: 'girl', pronun: '"girsh-akh"', note: 'Ulster word' },
+            { irish: 'fear', english: 'man', pronun: '"far"', note: '' },
+            { irish: 'bean', english: 'woman', pronun: '"ban"', note: '' },
+          ]
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'teach', english: 'house', pronun: '"tchakh"', note: '' },
+            { irish: 'doras', english: 'door', pronun: '"dur-us"', note: '' },
+            { irish: 'fuinneog', english: 'window', pronun: '"fwin-yohg"', note: '' },
+            { irish: 'cistin', english: 'kitchen', pronun: '"kish-tin"', note: '' },
+            { irish: 'seomra', english: 'room/bedroom', pronun: '"shoh-mra"', note: '' },
+            { irish: 'cathaoir', english: 'chair', pronun: '"ka-heer"', note: '' },
+            { irish: 'bord', english: 'table', pronun: '"burd"', note: '' },
+          ]
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'arán', english: 'bread', pronun: '"a-rawn"', note: '' },
+            { irish: 'bainne', english: 'milk', pronun: '"ban-yeh"', note: '' },
+            { irish: 'uisce', english: 'water', pronun: '"ish-keh"', note: '' },
+            { irish: 'tae', english: 'tea', pronun: '"tay"', note: '' },
+            { irish: 'feoil', english: 'meat', pronun: '"fyohl"', note: '' },
+            { irish: 'úll', english: 'apple', pronun: '"ool"', note: '' },
+            { irish: 'im', english: 'butter', pronun: '"im"', note: '' },
+          ]
+        },
+        {
+          type: 'vocab',
+          items: [
+            { irish: 'mór', english: 'big', pronun: '"more"', note: '' },
+            { irish: 'beag', english: 'small', pronun: '"byug"', note: '' },
+            { irish: 'maith', english: 'good', pronun: '"mah"', note: '' },
+            { irish: 'olc', english: 'bad', pronun: '"ulk"', note: '' },
+            { irish: 'te', english: 'hot', pronun: '"tcheh"', note: '' },
+            { irish: 'fuar', english: 'cold', pronun: '"foo-ur"', note: '' },
+            { irish: 'Éire', english: 'Ireland', pronun: '"Ay-reh"', note: '' },
+            { irish: 'Gaeilge', english: 'Irish language', pronun: '"Gway-lig-eh"', note: '' },
+            { irish: 'madadh', english: 'dog', pronun: '"ma-duh"', note: 'Ulster word' },
+          ]
+        },
+        {
+          type: 'convo',
+          title: 'Sa teach — In the house',
+          lines: [
+            { speaker: 'A', irish: 'An bhfuil tae agat?', english: 'Do you have tea?' },
+            { speaker: 'B', irish: 'Tá. Ba mhaith leat cupán?', english: 'Yes. Would you like a cup?' },
+            { speaker: 'A', irish: 'Ba mhaith, go raibh maith agat. An bhfuil arán ann freisin?', english: 'Yes please, thank you. Is there bread too?' },
+            { speaker: 'B', irish: 'Tá arán agus im sa chistin.', english: 'There is bread and butter in the kitchen.' },
+            { speaker: 'A', irish: 'Ar fheabhas! Tá mé an-ocrach.', english: "Excellent! I'm very hungry." },
+          ]
+        }
+      ]
+    },
+    quiz: [
+      { english: 'Mother', irish: 'How do you say "mother"?', answer: 'máthair', explanation: '"Máthair" = mother.' },
+      { english: 'Father', irish: 'How do you say "father"?', answer: 'athair', explanation: '"Athair" = father.' },
+      { english: 'Boy (Ulster Irish)', irish: 'How do you say "boy" in Ulster Irish?', answer: 'gasúr', explanation: '"Gasúr" = boy in Ulster Irish. Standard uses "buachaill".' },
+      { english: 'Girl (Ulster Irish)', irish: 'How do you say "girl" in Ulster Irish?', answer: 'girseach', explanation: '"Girseach" = girl in Ulster Irish. Standard uses "cailín".' },
+      { english: 'House', irish: 'How do you say "house"?', answer: 'teach', explanation: '"Teach" = house.' },
+      { english: 'Water', irish: 'How do you say "water"?', answer: 'uisce', explanation: '"Uisce" = water.' },
+      { english: 'Bread', irish: 'How do you say "bread"?', answer: 'arán', explanation: '"Arán" = bread.' },
+      { english: 'Dog (Ulster Irish)', irish: 'How do you say "dog" in Ulster Irish?', answer: 'madadh', explanation: '"Madadh" = dog in Ulster Irish. Standard uses "madra".' },
+      { english: 'Big', irish: 'How do you say "big"?', answer: 'mór', explanation: '"Mór" = big/large.' },
+      { english: 'Irish language', irish: 'How do you say "the Irish language"?', answer: 'Gaeilge', explanation: '"Gaeilge" = the Irish language.' },
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════════════
+let currentTopicIdx = 0;
+let currentView = 'learn'; // 'learn' | 'quiz'
+let quizQuestions = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizTotal = 0;
+const topicsDone = new Set();
+
+// ══════════════════════════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════════════════════════
+function render() {
+  renderNav();
+  renderDots();
+  updateMainProgress();
+  if (currentView === 'learn') renderLearn();
+  else if (currentView === 'quiz') renderQuiz();
+}
+
+function renderNav() {
+  const nav = document.getElementById('topic-nav');
+  nav.innerHTML = '';
+  TOPICS.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'topic-nav-btn' + (i === currentTopicIdx ? ' active' : '') + (topicsDone.has(t.id) && i !== currentTopicIdx ? ' done' : '');
+    btn.textContent = (topicsDone.has(t.id) ? '✓ ' : '') + t.label;
+    if (i === currentTopicIdx) {
+      btn.style.background = t.color;
+      btn.style.borderColor = t.color;
+    }
+    btn.addEventListener('click', () => { currentTopicIdx = i; currentView = 'learn'; render(); window.scrollTo(0,0); });
+    nav.appendChild(btn);
+  });
+}
+
+function renderDots() {
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  TOPICS.forEach((t, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (topicsDone.has(t.id) ? ' done' : '') + (i === currentTopicIdx ? ' current' : '');
+    if (i === currentTopicIdx) d.style.background = t.color;
+    else if (topicsDone.has(t.id)) d.style.background = '#4a8a2e';
+    dots.appendChild(d);
+  });
+}
+
+function updateMainProgress() {
+  const pct = (topicsDone.size / TOPICS.length) * 100;
+  document.getElementById('main-progress').style.width = pct + '%';
+}
+
+function renderLearn() {
+  const topic = TOPICS[currentTopicIdx];
+  const learn = topic.learn;
+  let html = `
+    <div class="section-header fade-in">
+      <div class="section-icon" style="background:${topic.colorLight};color:${topic.color}">${topic.icon}</div>
+      <div>
+        <div class="section-title">${learn.title}</div>
+        <div class="section-subtitle">${learn.subtitle}</div>
+      </div>
+    </div>
+  `;
+
+  learn.content.forEach(block => {
+    if (block.type === 'info') {
+      html += `<div class="info-box fade-in">${block.text}</div>`;
+    }
+    else if (block.type === 'pronunciation') {
+      html += `<div class="pronun-box fade-in"><h3>🔊 ${block.title}</h3><div class="pronun-grid">`;
+      block.items.forEach(item => {
+        html += `<div class="pronun-item"><strong>${item.key}</strong> — ${item.value}</div>`;
+      });
+      html += `</div></div>`;
+    }
+    else if (block.type === 'vocab') {
+      html += `<div class="vocab-grid fade-in">`;
+      block.items.forEach(item => {
+        html += `<div class="vocab-card">
+          <div class="vocab-irish">${item.irish}</div>
+          <div class="vocab-english">${item.english}</div>
+          <div class="vocab-pronun">${item.pronun}</div>
+          <div class="vocab-note">${item.note}</div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    else if (block.type === 'convo') {
+      html += `<div class="convo-box fade-in"><h3>💬 ${block.title}</h3>`;
+      block.lines.forEach(line => {
+        html += `<div class="convo-line">
+          <div class="convo-speaker">${line.speaker}</div>
+          <div class="convo-content">
+            <div class="convo-irish">${line.irish}</div>
+            <div class="convo-english">${line.english}</div>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+  });
+
+  html += `<div class="section-footer">
+    <button class="btn-start-quiz" onclick="startQuiz()">Take the quiz on this section →</button>
+  </div>`;
+
+  const content = document.getElementById('main-content');
+  content.innerHTML = html;
+}
+
+function startQuiz() {
+  const topic = TOPICS[currentTopicIdx];
+  quizQuestions = shuffle([...topic.quiz]);
+  quizIndex = 0; quizCorrect = 0; quizTotal = 0;
+  currentView = 'quiz';
+  renderQuiz();
+  window.scrollTo(0,0);
+}
+
+function shuffle(arr) {
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function renderQuiz() {
+  const topic = TOPICS[currentTopicIdx];
+  const q = quizQuestions[quizIndex];
+  if (!q) { renderQuizFinish(); return; }
+
+  const pct = quizTotal > 0 ? Math.round((quizCorrect/quizTotal)*100) : 0;
+  const scoreColor = pct >= 70 ? '#1a5c30' : pct >= 40 ? '#7a4a00' : '#8b2020';
+
+  const content = document.getElementById('main-content');
+  content.innerHTML = `
+    <div class="quiz-header fade-in" style="background:${topic.color}">
+      <h3>${topic.icon} ${topic.learn.title} — Quiz</h3>
+      <p>Question ${quizIndex+1} of ${quizQuestions.length}</p>
+    </div>
+    <div class="quiz-score">
+      <span>Question <strong>${quizIndex+1}/${quizQuestions.length}</strong></span>
+      <span>Score <strong style="color:${scoreColor}">${quizCorrect}/${quizTotal}</strong></span>
+    </div>
+    <div class="q-card fade-in" id="q-card">
+      <div class="q-badge">${topic.label}</div>
+      <div class="q-english">
+        <div class="q-english-label">English</div>
+        <div class="q-english-text">${q.english}</div>
+      </div>
+      <div class="q-prompt">${q.irish}</div>
+      <div class="input-row" id="q-input-row">
+        <input class="q-input" id="q-input" type="text" placeholder="Freagra…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button class="q-submit" id="q-submit">Seol →</button>
+      </div>
+      <div id="q-result" class="hidden"></div>
+    </div>
+    <div style="margin-top:1rem;text-align:center">
+      <button onclick="currentView='learn';render();window.scrollTo(0,0)" style="background:transparent;border:none;color:var(--muted);font-family:'Lora',serif;font-size:0.82rem;cursor:pointer;text-decoration:underline;">← Back to lesson</button>
+    </div>
+  `;
+
+  const input = document.getElementById('q-input');
+  const submitBtn = document.getElementById('q-submit');
+
+  function doSubmit() {
+    const val = input.value;
+    if (!val.trim()) return;
+    const { result, reminder } = checkAnswer(val, q.answer);
+    const isPoint = result === 'correct' || result === 'close';
+    if (isPoint) quizCorrect++;
+    quizTotal++;
+
+    document.getElementById('q-input-row').classList.add('hidden');
+    const resultDiv = document.getElementById('q-result');
+    resultDiv.classList.remove('hidden');
+
+    const label = result==='correct' ? '✓ Ceart!' : result==='close' ? '✓ Ceart — ach…' : '✗ Mícheart';
+    const answerHtml = result==='wrong' ? `<div class="result-answer">Freagra: ${q.answer}</div>` : '';
+    const reminderHtml = (result==='close'&&reminder) ? `<div class="result-reminder">${reminder}</div>` : '';
+    const isLast = quizIndex+1 >= quizQuestions.length;
+    const nextLabel = isLast ? 'Féach ar na torthaí →' : 'Ceist eile →';
+
+    resultDiv.innerHTML = `
+      <div class="result-box ${result}">
+        <div class="result-label">${label}</div>
+        ${answerHtml}
+        ${reminderHtml}
+        <div class="result-explanation">${q.explanation}</div>
+      </div>
+      <button class="q-next" id="q-next">${nextLabel}</button>
+    `;
+
+    document.getElementById('q-next').addEventListener('click', () => {
+      quizIndex++;
+      if (quizIndex >= quizQuestions.length) renderQuizFinish();
+      else renderQuiz();
+      window.scrollTo(0,200);
+    });
+  }
+
+  submitBtn.addEventListener('click', doSubmit);
+  input.addEventListener('keydown', e => { if(e.key==='Enter') doSubmit(); });
+  setTimeout(() => input.focus(), 100);
+}
+
+function renderQuizFinish() {
+  const topic = TOPICS[currentTopicIdx];
+  const pct = quizTotal > 0 ? Math.round((quizCorrect/quizTotal)*100) : 0;
+  const emoji = pct>=80?'🌟':pct>=55?'💪':'📖';
+  const title = pct>=80?'Ar fheabhas!':pct>=55?'Go maith!':'Lean ar aghaidh!';
+  const sub = pct>=80?'Excellent!':pct>=55?'Well done!':'Keep going!';
+  const pctColor = pct>=70?'#1a5c30':pct>=40?'#7a4a00':'#8b2020';
+
+  // Mark topic done
+  topicsDone.add(topic.id);
+  updateMainProgress();
+  renderNav();
+  renderDots();
+
+  const isLastTopic = currentTopicIdx === TOPICS.length - 1;
+  const nextBtn = isLastTopic
+    ? `<button class="btn-secondary" onclick="currentTopicIdx=0;currentView='learn';render();window.scrollTo(0,0)">Start again from the beginning</button>`
+    : `<button class="btn-primary" onclick="currentTopicIdx++;currentView='learn';render();window.scrollTo(0,0)">Next topic: ${TOPICS[currentTopicIdx+1]?.label} →</button>`;
+
+  const content = document.getElementById('main-content');
+  content.innerHTML = `
+    <div class="finish-card fade-in">
+      <div class="finish-emoji">${emoji}</div>
+      <div class="finish-title">${title}</div>
+      <div class="finish-sub">${sub} — ${topic.learn.title}</div>
+      <div class="finish-pct" style="color:${pctColor}">${pct}%</div>
+      <div class="finish-tally">${quizCorrect} correct out of ${quizTotal}</div>
+      <div class="finish-btns">
+        <button class="btn-secondary" onclick="startQuiz()">Try quiz again</button>
+        <button class="btn-secondary" onclick="currentView='learn';render();window.scrollTo(0,0)">← Back to lesson</button>
+        ${nextBtn}
+      </div>
+    </div>
+  `;
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
